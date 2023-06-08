@@ -1,1 +1,56 @@
+#DIAZ HUACASI SEBASTIAN SALVADOR
+#2020836091
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
+from sklearn.preprocessing import LabelEncoder
+
+# Cargar los datos desde el archivo CSV
+datos = pd.read_csv("divorcios.csv", delimiter=";")
+
+# Mapear las respuestas a valores numéricos
+mapeo_respuestas = {
+    "En desacuerdo totalmente": 1,
+    "En desacuerdo": 2,
+    "Irrelevante": 3,
+    "De acuerdo": 4,
+    "De acuerdo totalmente": 5
+}
+datos = datos.replace(mapeo_respuestas)
+
+# Dividir los datos en características (X) y etiquetas (y)
+caracteristicas = datos.iloc[:, 1:-1]  # Excluir la columna ID
+etiquetas = datos.iloc[:, -1]
+
+# Dividir los datos en conjunto de entrenamiento y conjunto de prueba
+X_entrenamiento, X_prueba, y_entrenamiento, y_prueba = train_test_split(caracteristicas, etiquetas, test_size=0.2, random_state=42)
+
+# Crear una instancia del modelo de regresión logística
+modelo = LogisticRegression()
+
+# Entrenar el modelo con el conjunto de entrenamiento
+modelo.fit(X_entrenamiento, y_entrenamiento)
+
+# Realizar predicciones en el conjunto de prueba
+y_prediccion = modelo.predict(X_prueba)
+
+# Calcular la precisión del modelo en el conjunto de prueba
+precision = accuracy_score(y_prueba, y_prediccion)
+print("Precisión del modelo en el conjunto de prueba:", precision)
+
+# Calcular la matriz de confusión
+matriz_confusion = confusion_matrix(y_prueba, y_prediccion)
+print("Matriz de confusión:")
+print(matriz_confusion)
+
+# Calcular la precisión, el recall y el F1-score
+precision_promedio = precision_score(y_prueba, y_prediccion, average='weighted')
+recall_promedio = recall_score(y_prueba, y_prediccion, average='weighted')
+f1_promedio = f1_score(y_prueba, y_prediccion, average='weighted')
+print("Precisión:", precision_promedio)
+print("Recall:", recall_promedio)
+print("F1-score:", f1_promedio)
+
 
